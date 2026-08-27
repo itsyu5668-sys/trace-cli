@@ -100,7 +100,7 @@ blocked on the network.
 ## Development
 
 ```
-git clone https://github.com/YOUR-ORG/trace.git
+git clone https://github.com/itsyu5668-sys/trace-cli.git
 cd trace
 npm install
 npm link   # makes `trace` available globally from this checkout
