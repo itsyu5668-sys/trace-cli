@@ -22,7 +22,7 @@ test("redacts bearer tokens", () => {
 });
 
 test("redacts stripe vendor keys", () => {
-  const { scrubbed, redactions } = scrubSecrets("PLACEHOLDER");
+  const { scrubbed, redactions } = scrubSecrets("sk_test_abcdefghijklmnopqrstuvwxyz1234");
   assert.equal(redactions, 1);
   assert.match(scrubbed, /\[REDACTED\]/);
 });
