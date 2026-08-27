@@ -1,0 +1,34 @@
+{
+  "name": "trace-cli",
+  "version": "0.1.0",
+  "description": "Wrap any command; on crash, catch it, scrub secrets, checkpoint your git tree (Pro), and copy crash context to your AI coding agent.",
+  "type": "module",
+  "bin": {
+    "trace": "./bin/trace.js"
+  },
+  "main": "src/index.js",
+  "files": [
+    "bin/",
+    "src/",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node --test"
+  },
+  "keywords": [
+    "cli",
+    "developer-tools",
+    "ai-agents",
+    "claude-code",
+    "debugging"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/YOUR-ORG/trace.git"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  }
+}
