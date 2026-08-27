@@ -9,7 +9,7 @@ without copy-pasting a stack trace by hand.
 ## Install
 
 ```
-npm install -g trace-cli
+npm install -g trace-run
 ```
 
 This makes the `trace` command available globally on your machine.
