@@ -21,13 +21,21 @@ const STATE_DIR = join(homedir(), ".trace");
 const STATE_FILE = join(STATE_DIR, "license.json");
 const CACHE_FILE = join(STATE_DIR, "cache.json");
 
-// Deferred backend — point this at your verify-license endpoint once
+// Deploy goal — point this at your verify-license endpoint once
 // Phase 2 is deployed. Can be overridden at runtime with TRACE_API_URL.
 const DEFAULT_API_URL = "https://your-trace-api.example.com";
 export const API_URL = process.env.TRACE_API_URL ?? DEFAULT_API_URL;
 
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24h
 const RE_CHECK_COOLDOWN_MS = 12 * 60 * 60 * 1000; // at most ~2 background re-checks/day
+
+// Paid plan is paused for a free-only, waitlist launch. While this is
+// true, Pro features stay off for everyone regardless of any saved key:
+//   - `isPro()` always returns false  -> checkpoint/undo/fix-menu never run
+//   - `validateLicense()` returns false -> `trace login` won't activate Pro
+// Flip this to false (and point API_URL at your real backend + drop the
+// PRO_TEST_KEY) once you're ready to sell Pro again.
+const PRO_PAUSED = true;
 
 // Feature-test key so `trace login` / Pro can be exercised end-to-end
 // before the Phase 2 backend exists. Remove once the real backend ships.
@@ -85,6 +93,7 @@ async function verifyAgainstBackend(key, timeoutMs) {
  * and persists the cache on success.
  */
 export async function validateLicense(key) {
+  if (PRO_PAUSED) return false; // paid plan paused — nothing to validate
   if (!key) return false;
   if (key === PRO_TEST_KEY) {
     writeCache(true, "active");
@@ -109,6 +118,7 @@ export function saveLicenseKey(key) {
  * the cache fresh.
  */
 export async function isPro() {
+  if (PRO_PAUSED) return false; // paid plan paused — Pro stays off for everyone
   const key = getLicenseKey();
   if (!key) {
     // No saved key / env key: never Pro, however the cache looks.

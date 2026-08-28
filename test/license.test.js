@@ -21,13 +21,15 @@ test("no key -> not pro, no cache written", async () => {
   rmSync(home, { recursive: true, force: true });
 });
 
-test("login with test key saves + caches, then isPro true", async () => {
+test("paid plan paused: no key and even a test key cannot unlock Pro", async () => {
   const { mod, home } = await freshLicense();
+  // validateLicense is gated while PRO_PAUSED is true.
   const ok = await mod.validateLicense(PRO_TEST_KEY);
-  assert.equal(ok, true);
+  assert.equal(ok, false);
+  // Even if a key+cache were somehow present, isPro still returns false.
   mod.saveLicenseKey(PRO_TEST_KEY);
   const pro = await mod.isPro();
-  assert.equal(pro, true);
+  assert.equal(pro, false);
   rmSync(home, { recursive: true, force: true });
 });
 
