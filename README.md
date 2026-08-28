@@ -1,10 +1,8 @@
 # trace
 
-Wraps any command. When it crashes, trace catches the error, scrubs
-anything that looks like a secret, checkpoints your working tree (Pro),
-and copies a ready-to-paste prompt to your clipboard — so you can hand
-it to Claude Code, Cursor, or whatever agent you're already using
-without copy-pasting a stack trace by hand.
+I like other heavy AI users has had this stressful loop of  selecting the stack trace with my mouse, copying it, alt-tab to Claude Code or Cursor, paste, type "what broke," wait. Doing that 100 times in a day is what made me build this
+
+`trace` just wraps whatever command you'd normally run. When it crashes, trace catches the error, blanks out anything that looks like a secret, and drops the whole thing on your clipboard ready to paste into whatever AI agent you're already using. That's it. No dashboard, no config file, no accounts to set up for the core thing.
 
 ## Install
 
@@ -12,112 +10,90 @@ without copy-pasting a stack trace by hand.
 npm install -g tracewrap
 ```
 
-This makes the `trace` command available globally on your machine.
+That gives you the `trace` command globally.
 
-> Before the package is published to npm, install from source:
-> `cd trace && npm link`
-
-## Commands
+Package isn't live on npm yet? Run it straight from the repo instead:
 
 ```
-trace <command> [args...]     Wrap a command
-trace -- <command> [args...]  Same, but treat the next token literally
-trace logout                  Remove any saved license key + cache
-trace --help                  Usage overview
+cd trace && npm link
 ```
 
-> `trace login <key>` and `trace undo` are listed in `trace --help` but are
-> **coming soon** — the paid (Pro) plan isn't active yet. See below.
+## How you actually use it
 
-## Free tier (no license)
+Instead of:
 
-Crash detection, secret scrubbing, and clipboard handoff all work with
-no license key:
+```
+npm start
+```
+
+you run:
 
 ```
 trace npm start
+```
+
+Same output, same everything — trace just sits there quietly watching until something goes wrong. Works the same with any language, not just Node:
+
+```
 trace node server.js
 trace -- python app.py
 ```
 
-trace runs your command like normal — all output streams through as
-usual. When something crashes:
+When it does catch a crash, you get something like this:
 
-1. It shows you the caught error
-2. Scrubs likely secrets (API keys, tokens, passwords) before anything
-   leaves your machine
-3. Copies the error + context to your clipboard — paste it into your
-   agent
+```
+🚨 Error caught by trace:
+────────────────────────────────────────
+KnexTimeoutError: Timeout acquiring a connection
+────────────────────────────────────────
+🔒 Scrubbed 1 likely secret before copying.
+✅ Context copied to your clipboard — paste it into your AI agent.
+```
 
-Once per session it also hints at the Pro features coming soon.
+Grab it, paste it into your agent, move on with your day.
 
-## Pro tier — NOT ACTIVE (coming soon)
+## Commands
 
-The paid plan is **paused for now**. trace is shipping **free-only**
-first: crash detection, secret scrubbing, and clipboard handoff work
-out of the box with no license, and those are the whole product today.
+```
+trace <command> [args...]     wrap a command
+trace -- <command> [args...]  same, if you need to be explicit about the command
+trace logout                  clear a saved license + cache
+trace --help                  everything above, quickly
+```
 
-The Pro plan will add three things, but **it is not purchasable yet**:
+You'll also see `trace login` and `trace undo` mentioned in `--help` — those are for the paid plan, which isn't turned on yet (more on that below).
 
-- **Git checkpoint** before you start the fix — `trace undo` can get
-  you back to the exact pre-fix state, no matter what you or your agent
-  try next
-- **`trace undo`** — standalone revert to the last checkpoint
-- **Restart-to-verify loop** — after a crash you get this prompt:
+## What's free (and what isn't, yet)
+
+Right now, everything that actually works is free: crash detection, secret scrubbing, clipboard handoff. No license key, no signup, no catch. That's genuinely the whole product at the moment, and I'm in no rush to change that.
+
+There's a Pro plan planned a git checkpoint before you touch a fix, `trace undo` to bail out if the fix makes things worse, and a restart-and-verify step so you're not just hoping the crash is actually gone:
 
 ```
 Fix it, then: [Enter] restart & verify   [u] undo to last checkpoint   [q] quit
 ```
 
-  - **Enter** — restarts your app to check whether the crash is actually
-    gone
-  - **u** — reverts your working tree to the checkpoint from right
-    before you started fixing
-  - **q** — quits, leaving things as they are
+But **it's not live**. No payment link, no license key that unlocks anything — I'd rather ship the free version, see what people actually do with it, and build the paid tier around real use instead of guessing. If you want to know when it's ready, there's a waitlist at trace.sh. Trying `trace login` right now will just tell you it's coming.
 
-> **Join the waitlist at trace.sh** — the paid plan is **not active**.
-> `trace login` and `trace undo` will return a "coming soon" message until
-> it ships. No license key will unlock Pro today, by design: we're
-> shipping free first to see what people actually need before we build
-> the paid tier.
+## Rough edges, so you're not surprised
 
-## What's in v1
+- `trace undo` (once it's live) only puts back files git already knows about. Anything new your agent created gets left behind — worth a `git status` check after an undo.
+- Crash detection is pattern-matching on common stack trace shapes (Node, Python, Go). It's not going to catch everything, especially anything unusual.
+- Copying to your clipboard needs `pbcopy`, `clip`, or `xclip`/`xsel`/`wl-copy` depending on your OS. If none of those exist, trace just prints the context instead so you don't lose it.
 
-- [x] Crash detection (Node/Python/Go-style stack traces + generic error patterns)
-- [x] Secret scrubbing before anything is copied
-- [x] Clipboard handoff, agent-agnostic (works with any agent you paste into)
-- [~] Git-based checkpoint before you touch the "fix" (Pro — **coming soon**)
-- [~] Restart-to-verify loop (Pro — **coming soon**)
-- [~] `trace undo` (Pro — **coming soon**)
-- [~] License gating — free tier open; paid plan paused until launch
-
-## Known limitations (be aware before you rely on this)
-
-- `trace undo` only restores **tracked** files via `git reset --hard`.
-  New untracked files your agent creates are left behind — check
-  `git status` after an undo.
-- Error checks are heuristic (pattern-matching common stack trace
-  shapes). They won't catch every possible error format, especially in
-  languages/frameworks not yet tested against.
-- Clipboard access requires `pbcopy` (macOS), `clip` (Windows), or
-  `xclip`/`xsel`/`wl-copy` (Linux) to be available. If none are found,
-  trace prints context instead so nothing is lost.
-
-## Development
+## Working on it locally
 
 ```
 git clone https://github.com/itsyu5668-sys/trace-cli.git
 cd trace
 npm install
-npm link   # makes `trace` available globally from this checkout
+npm link
 ```
 
 ## License
 
-MIT — see [LICENSE](./LICENSE).
+MIT. Do what you want with it — see [LICENSE](./LICENSE).
 
-## Marketing
+## Where else to find this
 
-- Landing page: trace.sh (waitlist signup)
-- Free tier: crash detection, secret scrubbing, clipboard handoff
-- Pro tier: checkpoint + undo + restart-to-verify loop — **coming soon** (not active, no payment yet)
+Landing page (and the waitlist) is at trace.sh. If you found a bug or something's confusing, open an issue — I'd genuinely rather hear about it than have you quietly stop using it.
