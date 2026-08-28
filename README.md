@@ -22,11 +22,12 @@ This makes the `trace` command available globally on your machine.
 ```
 trace <command> [args...]     Wrap a command
 trace -- <command> [args...]  Same, but treat the next token literally
-trace login <key>             Activate Pro with a license key
-trace logout                  Remove your saved license key + cache
-trace undo                    (Pro) revert working tree to last checkpoint
+trace logout                  Remove any saved license key + cache
 trace --help                  Usage overview
 ```
+
+> `trace login <key>` and `trace undo` are listed in `trace --help` but are
+> **coming soon** — the paid (Pro) plan isn't active yet. See below.
 
 ## Free tier (no license)
 
@@ -48,12 +49,15 @@ usual. When something crashes:
 3. Copies the error + context to your clipboard — paste it into your
    agent
 
-Once per session it also hints that the Pro features exist.
+Once per session it also hints at the Pro features coming soon.
 
-## Pro tier
+## Pro tier — NOT ACTIVE (coming soon)
 
-`trace login <key>` (after a purchase at trace.sh/pro) unlocks three
-things:
+The paid plan is **paused for now**. trace is shipping **free-only**
+first: crash detection, secret scrubbing, and clipboard handoff work
+out of the box with no license, and those are the whole product today.
+
+The Pro plan will add three things, but **it is not purchasable yet**:
 
 - **Git checkpoint** before you start the fix — `trace undo` can get
   you back to the exact pre-fix state, no matter what you or your agent
@@ -71,19 +75,21 @@ Fix it, then: [Enter] restart & verify   [u] undo to last checkpoint   [q] quit
     before you started fixing
   - **q** — quits, leaving things as they are
 
-Pro status is cached locally for ~24h, so it keeps working offline for
-most of a day; it re-validates in the background so startup is never
-blocked on the network.
+> **Join the waitlist at trace.sh** — the paid plan is **not active**.
+> `trace login` and `trace undo` will return a "coming soon" message until
+> it ships. No license key will unlock Pro today, by design: we're
+> shipping free first to see what people actually need before we build
+> the paid tier.
 
 ## What's in v1
 
 - [x] Crash detection (Node/Python/Go-style stack traces + generic error patterns)
 - [x] Secret scrubbing before anything is copied
-- [x] Git-based checkpoint before you touch the "fix" (Pro)
-- [x] Restart-to-verify loop (Pro)
-- [x] `trace undo` (Pro)
 - [x] Clipboard handoff, agent-agnostic (works with any agent you paste into)
-- [x] License gating — free tier open, Pro unlocked by key
+- [~] Git-based checkpoint before you touch the "fix" (Pro — **coming soon**)
+- [~] Restart-to-verify loop (Pro — **coming soon**)
+- [~] `trace undo` (Pro — **coming soon**)
+- [~] License gating — free tier open; paid plan paused until launch
 
 ## Known limitations (be aware before you rely on this)
 
@@ -112,6 +118,6 @@ MIT — see [LICENSE](./LICENSE).
 
 ## Marketing
 
-- Landing page: trace.sh/pro (or the placeholder URL above)
+- Landing page: trace.sh (waitlist signup)
 - Free tier: crash detection, secret scrubbing, clipboard handoff
-- Pro tier: checkpoint + undo + restart-to-verify loop ($9/mo or ~$79/yr)
+- Pro tier: checkpoint + undo + restart-to-verify loop — **coming soon** (not active, no payment yet)

@@ -102,7 +102,7 @@ export async function runTrace(command, args, { pro = false } = {}) {
         } else if (!pro && gitAvailable && !proTipShown) {
           proTipShown = true;
           console.log(
-            "Pro tip: `trace` can checkpoint your code before you fix this and let you undo bad fixes \u2014 see trace.sh/pro"
+            "Pro tip: `trace` can checkpoint your code before you fix this and let you undo bad fixes \u2014 coming soon, join the waitlist at trace.sh"
           );
         }
 
