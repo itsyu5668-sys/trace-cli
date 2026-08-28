@@ -1,6 +1,6 @@
 {
   "name": "tracewrap",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Wrap any command; on crash, catch it, scrub secrets, checkpoint your git tree (Pro), and copy crash context to your AI coding agent.",
   "type": "module",
   "bin": {
